@@ -63,8 +63,6 @@ int putCommands(const int sd,const char*path)
         {
                 printf("To Server : %s",buf);
 
-
-
                 len = strlen(buf) + 1;
                 if(send(sd,buf,len,0) == -1) {
                         perror("command send error\n");
@@ -91,6 +89,47 @@ int putCommands(const int sd,const char*path)
         }
 
         fclose(fp);
+        return 0;
+}
+
+int putCommand(const int sd,const char* command)
+{
+        int len,rlen;
+        char buf[BUF_SIZE];
+        memset(buf, 0, BUF_SIZE * (sizeof buf[0]) );
+
+        // printf("To Server : %s\n", command);
+        // len = strlen(command)+1;
+        // if(send(sd,command,len,0) == -1) {
+        //         perror("command send error\n");
+        //         return -1;
+        // }
+        // printf("sended\n");
+
+        len = strlen(command) + 1;
+        if(send(sd,command,len,0) == -1) {
+                perror("command send error\n");
+                return -1;
+        }
+
+        printf("send\n");
+        //
+        // if((rlen = recv(sd,buf,BUF_SIZE,0)) == -1) {
+        //         perror("command reseive error\n");
+        //         return -1;
+        // }
+        //
+        // printf("%s",buf);   //empty response..?
+        // memset(buf, 0, BUF_SIZE * (sizeof buf[0]) );
+        //
+        // if((rlen = recv(sd,buf,BUF_SIZE,0)) == -1) {
+        //         perror("command reseive error\n");
+        //         return -1;
+        // }
+        // printf("Response : %s\n",buf);
+
+        printf("---------------------------\n");
+      return 0;
 }
 
 

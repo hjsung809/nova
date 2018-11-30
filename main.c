@@ -24,15 +24,28 @@ int main(int argc,char* argv[])
     exit(1);
   }
   putCommands(sd2,"commands");
-
+  //putCommand(sd2,"LOG ICOM1 GPGGA ONTIME 1");
 
 
   FILE* fp;
   openFile(&fp,"../testlog","w");
 
+  // switch (pid = fork()) {
+  //   case -1 :
+  //     perror("fork error\n");
+  //     exit(1);
+  //     break;
+  //   case 0 : //child
+  //
+  //
+  //   break;
+  // }
+
   int rlen=0;
   while((rlen = recv(sd,buf,BUF_SIZE,0)) > -1){
+    //printf("receved\n");
 		fputs(buf,fp);
+    fflush(fp);
 	}
 
 

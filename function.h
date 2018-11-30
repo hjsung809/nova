@@ -11,4 +11,6 @@
 
 int createConnection(int* sd,const char* addr,const int port);
 int putCommands(const int sd,const char*path);
+int putCommand(const int sd,const char* command);
+
 int openFile(FILE** fp,const char* path,const char* mode);
