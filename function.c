@@ -8,13 +8,10 @@ int createConnection(int* sd,const char* addr,const int port){
                 perror("socket failed. Error");
                 return -1;
         }
-
-
-
         memset((char*)&sin, '\0', sizeof(sin));
         sin.sin_family = AF_INET;
-        sin.sin_port = htons(2000);
-        sin.sin_addr.s_addr = inet_addr("192.168.74.10");
+        //sin.sin_port = htons(2000);
+        //sin.sin_addr.s_addr = inet_addr("192.168.74.10");
         sin.sin_port = htons(port);
         sin.sin_addr.s_addr = inet_addr(addr);
         memset(&(sin.sin_zero), 0,8);
@@ -31,14 +28,14 @@ int createConnection(int* sd,const char* addr,const int port){
 
         (*sd) = _sd;
 
-        char buf[BUF_SIZE];
-        memset(buf, 0, BUF_SIZE * (sizeof buf[0]) );
-        if(recv(_sd,buf,BUF_SIZE,0) == -1) {
-                perror("command reseive error\n");
-                return -1;
-        }
-        printf("Port opened.\n");
-        printf("Port Name : %s\n",buf);
+        // char buf[BUF_SIZE];
+        // memset(buf, 0, BUF_SIZE * (sizeof buf[0]) );
+        // if(recv(_sd,buf,BUF_SIZE,0) == -1) {
+        //         perror("command reseive error\n");
+        //         return -1;
+        // }
+        // printf("Port opened.\n");
+        // printf("Port Name : %s\n",buf);
 
         return 0;
 }
@@ -49,7 +46,10 @@ int putCommands(const int sd,const char*path)
         FILE *fp;
         int len,rlen;
         char buf[BUF_SIZE];
-        char buf2[BUF_SIZE];
+        struct timespec tim,tim2;
+        tim.tv_sec = 0;
+        tim.tv_nsec = 100000000; // 0.1s
+        //char buf2[BUF_SIZE];
         if((fp = fopen(path,"r")) ==0 )
         {
                 perror("open error\n");
@@ -57,7 +57,7 @@ int putCommands(const int sd,const char*path)
         }
 
         memset(buf, 0, BUF_SIZE * (sizeof buf[0]) );
-        memset(buf2, 0, BUF_SIZE * (sizeof buf[0]) );
+        //memset(buf2, 0, BUF_SIZE * (sizeof buf[0]) );
 
         while((fgets(buf,BUF_SIZE,fp))!=NULL)
         {
@@ -69,23 +69,11 @@ int putCommands(const int sd,const char*path)
                         return -1;
                 }
 
-
-                if((rlen = recv(sd,buf2,BUF_SIZE,0)) == -1) {
-                        perror("command reseive error\n");
-                        return -1;
-                }
-
-                printf("%s",buf2);   //empty response..?
-                memset(buf2, 0, BUF_SIZE * (sizeof buf[0]) );
-
-                if((rlen = recv(sd,buf2,BUF_SIZE,0)) == -1) {
-                        perror("command reseive error\n");
-                        return -1;
-                }
-                printf("Response : %s\n",buf2);
-                memset(buf2, 0, BUF_SIZE * (sizeof buf[0]) );
-
-                printf("---------------------------\n");
+                if(nanosleep(&tim, &tim2) < 0)
+            		{
+            			printf("sleep error");
+            			exit(0);
+            		}
         }
 
         fclose(fp);
@@ -94,41 +82,14 @@ int putCommands(const int sd,const char*path)
 
 int putCommand(const int sd,const char* command)
 {
-        int len,rlen;
-        char buf[BUF_SIZE];
-        memset(buf, 0, BUF_SIZE * (sizeof buf[0]) );
-
-        // printf("To Server : %s\n", command);
-        // len = strlen(command)+1;
-        // if(send(sd,command,len,0) == -1) {
-        //         perror("command send error\n");
-        //         return -1;
-        // }
-        // printf("sended\n");
-
+        int len;
         len = strlen(command) + 1;
         if(send(sd,command,len,0) == -1) {
                 perror("command send error\n");
                 return -1;
         }
 
-        printf("send\n");
-        //
-        // if((rlen = recv(sd,buf,BUF_SIZE,0)) == -1) {
-        //         perror("command reseive error\n");
-        //         return -1;
-        // }
-        //
-        // printf("%s",buf);   //empty response..?
-        // memset(buf, 0, BUF_SIZE * (sizeof buf[0]) );
-        //
-        // if((rlen = recv(sd,buf,BUF_SIZE,0)) == -1) {
-        //         perror("command reseive error\n");
-        //         return -1;
-        // }
-        // printf("Response : %s\n",buf);
-
-        printf("---------------------------\n");
+        printf("To server: %s\n", command);
       return 0;
 }
 
